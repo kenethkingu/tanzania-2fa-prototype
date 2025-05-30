@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Tanzania E-Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        nav {
+            background-color: #34495e;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #3498db;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .welcome-message {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+        .action-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 10px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .action-button:hover {
+            background: #2980b9;
+        }
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            nav a {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tanzania E-Service Portal</h1>
+    </header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/">Logout</a>
+    </nav>
+    <div class="container">
+        <h1>Welcome, {{ username }}!</h1>
+        <p class="welcome-message">This is your secure e-service dashboard. Your account is protected with TOTP 2FA.</p>
+    </div>
+    <footer>
+        <p>&copy; 2025 Tanzania E-Service Portal. All rights reserved.</p>
+    </footer>
+</body>
+</html>

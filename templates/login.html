@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Tanzania E-Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        form { display: inline-block; text-align: left; }
+        input { margin: 10px; padding: 8px; width: 200px; }
+        button { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <h1>Login</h1>
+    <form method="post">
+        <label for="username">Username:</label><br>
+        <input type="text" name="username" id="username" required><br>
+        <label for="password">Password:</label><br>
+        <input type="password" name="password" id="password" required><br>
+        <label for="totp_code">2FA Code:</label><br>
+        <input type="text" name="totp_code" id="totp_code" required><br>
+        <button type="submit">Login</button>
+    </form>
+    <p><a href="/register">No account? Register</a></p>
+</body>
+</html>

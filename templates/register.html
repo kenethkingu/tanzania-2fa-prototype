@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Tanzania E-Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        form { display: inline-block; text-align: left; }
+        input { margin: 10px; padding: 8px; width: 200px; }
+        button { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <h1>Register</h1>
+    <form method="post">
+        <label for="username">Username:</label><br>
+        <input type="text" name="username" id="username" required><br>
+        <label for="password">Password:</label><br>
+        <input type="password" name="password" id="password" required><br>
+        <button type="submit">Register</button>
+    </form>
+    <p><a href="/login">Already have an account? Login</a></p>
+</body>
+</html>

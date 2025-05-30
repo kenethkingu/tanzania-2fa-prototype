@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOTP Setup - Tanzania E-Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        img { max-width: 200px; }
+        p { max-width: 600px; margin: 20px auto; }
+    </style>
+</head>
+<body>
+    <h1>Setup Two-Factor Authentication</h1>
+    <p>Scan this QR code with an app like Google Authenticator to set up 2FA for your account.</p>
+    <img src="{{ url_for('static', filename=qr_image) }}" alt="TOTP QR Code">
+    <p>After setup, <a href="/login">login</a> with your 2FA code.</p>
+</body>
+</html>
