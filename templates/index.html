@@ -1,20 +1,275 @@
+<!--templates/index.html-->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tanzania E-Service Portal</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
-        h1 { color: #2c3e50; }
-        a { margin: 10px; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; }
-        a:hover { background: #2980b9; }
-    </style>
-</head>
-<body>
-    <h1>Welcome to Tanzania E-Service Portal</h1>
-    <p>Secure your account with Two-Factor Authentication (2FA)</p>
-    <a href="/register">Register</a>
-    <a href="/login">Login</a>
-</body>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+    <link rel="icon" href="/static/favicon.ico" />
+
+    <script nonce="{{ script_nonce }}">
+      document.addEventListener("DOMContentLoaded", () => {
+        AOS.init({ duration: 800, once: true, easing: "ease-out" });
+
+        const modal = document.getElementById("signInModal");
+        const getStartedBtn = document.querySelector("button[data-aos-delay='400']");
+        const closeBtn = document.querySelector(".modal-content button");
+        const modalLinks = document.querySelectorAll(".modal-links a");
+        const allButtons = document.querySelectorAll("button, a");
+        const overlay = document.getElementById("pageOverlay");
+
+        function disableAllInteractions() {
+          allButtons.forEach((el) => {
+            el.style.pointerEvents = "none";
+            el.classList.add("cursor-not-allowed", "opacity-50");
+            if (el.tagName === "BUTTON") el.disabled = true;
+          });
+        }
+
+        function enableAllInteractions() {
+          allButtons.forEach((el) => {
+            el.style.pointerEvents = "";
+            el.classList.remove("cursor-not-allowed", "opacity-50");
+            if (el.tagName === "BUTTON") el.disabled = false;
+          });
+        }
+
+        function showOverlay() {
+          overlay.classList.remove("hidden", "opacity-0");
+          overlay.classList.add("opacity-100");
+        }
+
+        function hideOverlay() {
+          overlay.classList.remove("opacity-100");
+          overlay.classList.add("opacity-0");
+          setTimeout(() => {
+            overlay.classList.add("hidden");
+          }, 300);
+        }
+
+        function toggleModal() {
+          if (!{{ logged_in | tojson }}) {
+            modal.classList.toggle("show");
+            modal.classList.contains("show") ? showOverlay() : hideOverlay();
+            enableAllInteractions();
+          }
+        }
+
+        function closeModal() {
+          if (modal.classList.contains("show")) {
+            modal.classList.remove("show");
+            hideOverlay();
+            enableAllInteractions();
+          }
+        }
+
+        getStartedBtn?.addEventListener("click", toggleModal);
+        closeBtn?.addEventListener("click", toggleModal);
+
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) toggleModal();
+        });
+
+        modalLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            disableAllInteractions();
+            showOverlay(); // Show overlay during navigation
+          });
+        });
+
+        window.addEventListener("load", () => {
+          closeModal(); // Close modal after new page renders
+          hideOverlay(); // Hide overlay after new page renders
+          enableAllInteractions();
+        });
+        window.addEventListener("beforeunload", disableAllInteractions);
+      });
+    </script>
+  </head>
+
+  <body
+    class="text-white bg-whitesmoke overflow-x-hidden max-w-full-screen min-h-screen relative"
+  >
+    <!-- Hero Section -->
+    <section
+      class="relative h-screen flex items-center justify-center px-4 sm:px-8 md:px-12 py-12"
+    >
+      <div class="video-container">
+        <video class="hero-video" autoplay loop muted playsinline>
+          <source src="/static/videos/tech-auth.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-overlay"></div>
+      </div>
+      <div class="text-center max-w-5xl mx-auto">
+        <h1
+          class="text-6xl sm:text-7xl md:text-8xl font-extrabold mb-8 leading-tight animate__animated animate__fadeInDown text-custom-heading hero-text-shadow"
+          data-aos="fade-down"
+        >
+          Tanzania E-Service Portal
+        </h1>
+        <p
+          class="text-2xl sm:text-3xl md:text-4xl mb-8 text-custom-paragraph animate__animated animate__fadeInUp heading-1 hero-text-shadow"
+          data-aos="fade-up"
+          data-aos-delay="200"
+        >
+          Secure, Modern, and Trusted Digital Services for All Tanzanians
+        </p>
+        {% if logged_in %}
+        <a href="/dashboard">
+          <button
+            class="gradient-btn px-8 py-4 text-2xl font-bold rounded-full transform transition animate__animated animate__pulse animate__infinite"
+            data-aos="zoom-in"
+            data-aos-delay="400"
+          >
+            <i class="fas fa-tachometer-alt mr-3"></i> Proceed to Dashboard
+          </button>
+        </a>
+        {% else %}
+        <button
+          class="gradient-btn px-8 py-4 text-2xl font-bold rounded-full transform transition animate__animated animate__pulse animate__infinite"
+          data-aos="zoom-in"
+          data-aos-delay="400"
+        >
+          <i class="fas fa-sign-in-alt mr-3"></i> Get Started
+        </button>
+        {% endif %}
+      </div>
+    </section>
+
+    <!-- Sign-In Modal -->
+    <div id="signInModal" class="modal z-50">
+      <div class="modal-content text-gray-800">
+        <h2 class="text-3xl font-bold mb-4 text-gray-900">Welcome!</h2>
+        <p class="text-base text-gray-600 mb-6">
+          Access your Tanzania E-Service Portal account
+        </p>
+        <div class="modal-links">
+          <a
+            href="/login"
+            class="text-gray-600 text-base hover:text-gray-900 text-center transition flex items-center justify-center py-2"
+          >
+            <i class="fas fa-user mr-2"></i> Login
+          </a>
+          <a
+            href="/register"
+            class="text-gray-600 text-base hover:text-gray-900 text-center transition flex items-center justify-center py-2"
+          >
+            <i class="fas fa-user-plus mr-2"></i> Register
+          </a>
+          <a
+            href="/google_login"
+            class="text-gray-600 text-base hover:text-gray-900 text-center transition flex items-center justify-center py-2"
+          >
+            <i class="fab fa-google mr-2"></i> Sign In with Google
+          </a>
+        </div>
+        <button
+          class="mt-6 text-gray-600 text-base hover:text-gray-900 w-full text-center transition py-2"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <!-- Full-page Overlay -->
+    <div
+      id="pageOverlay"
+      class="fixed inset-0 bg-black bg-opacity-60 z-40 hidden opacity-0 transition-opacity duration-300"
+    ></div>
+
+    <!-- Features Section -->
+    <section class="py-32 bg-gray-800 section-features">
+      <div class="container mx-auto px-4 sm:px-8 md:px-12 max-w-7xl">
+        <h2
+          class="text-4xl md:text-5xl font-bold text-center mb-8 text-white"
+          data-aos="fade-up"
+        >
+          Why Choose Us?
+        </h2>
+        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div
+            class="feature-card bg-gray-700 rounded-xl shadow-lg p-6 hover:bg-gray-600 transition-all duration-300"
+            data-aos="fade-right"
+          >
+            <i class="fas fa-shield-alt text-5xl text-teal-500 mb-6"></i>
+            <h3 class="text-2xl font-semibold mb-4 text-white">
+              Secure Authentication
+            </h3>
+            <p class="text-gray-300 text-lg">
+              Robust 2FA and Google Sign-In keep your account safe.
+            </p>
+          </div>
+          <div
+            class="feature-card bg-gray-700 rounded-xl shadow-lg p-6 hover:bg-gray-600 transition-all duration-300"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <i class="fas fa-bolt text-5xl text-yellow-500 mb-6"></i>
+            <h3 class="text-2xl font-semibold mb-4 text-white">
+              Fast & Reliable
+            </h3>
+            <p class="text-gray-300 text-lg">
+              Seamless access with a modern, intuitive interface.
+            </p>
+          </div>
+          <div
+            class="feature-card bg-gray-700 rounded-xl shadow-lg p-6 hover:bg-gray-600 transition-all duration-300"
+            data-aos="fade-left"
+            data-aos-delay="400"
+          >
+            <i class="fas fa-lock text-5xl text-indigo-500 mb-6"></i>
+            <h3 class="text-2xl font-semibold mb-4 text-white">Data Privacy</h3>
+            <p class="text-gray-300 text-lg">
+              Compliant with Tanzania’s Data Protection Act.
+            </p>
+          </div>
+          <div
+            class="feature-card bg-gray-700 rounded-xl shadow-lg p-6 hover:bg-gray-600 transition-all duration-300"
+            data-aos="fade-right"
+            data-aos-delay="600"
+          >
+            <i class="fas fa-globe text-5xl text-purple-500 mb-6"></i>
+            <h3 class="text-2xl font-semibold mb-4 text-white">
+              Accessible Anywhere
+            </h3>
+            <p class="text-gray-300 text-lg">
+              Use on any device, anytime, anywhere in Tanzania.
+            </p>
+          </div>
+          <div
+            class="feature-card bg-gray-700 rounded-xl shadow-lg p-6 hover:bg-gray-600 transition-all duration-300"
+            data-aos="fade-up"
+            data-aos-delay="800"
+          >
+            <i class="fas fa-headset text-5xl text-orange-500 mb-6"></i>
+            <h3 class="text-2xl font-semibold mb-4 text-white">24/7 Support</h3>
+            <p class="text-gray-300 text-lg">
+              Our team is always ready to assist you.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AOS Script -->
+    <script
+      src="https://unpkg.com/aos@2.3.1/dist/aos.js"
+      nonce="{{ script_nonce }}"
+    ></script>
+  </body>
 </html>

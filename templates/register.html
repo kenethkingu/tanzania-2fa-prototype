@@ -1,26 +1,554 @@
+<!--templates/register.html-->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - Tanzania E-Service</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@300;400;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
+    />
+    <link rel="icon" href="/favicon.ico" />
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
-        form { display: inline-block; text-align: left; }
-        input { margin: 10px; padding: 8px; width: 200px; }
-        button { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #2980b9; }
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      /* Video Background */
+      .video-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .hero-video {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+
+      .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(
+          0,
+          0,
+          0,
+          0.5
+        ); /* Slightly lighter overlay for better contrast */
+        z-index: 0;
+      }
+
+      /* Glassmorphism Card Style */
+      .glassmorphism {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.15),
+          rgba(255, 255, 255, 0.05)
+        );
+        backdrop-filter: blur(15px);
+        border: 2px solid transparent;
+        border-image: linear-gradient(135deg, #14b8a6, #0d9488) 1;
+        padding: 1.5rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        width: 100%; /* Default width for all screens, adjusted by max-width */
+        margin: 0 auto;
+        box-sizing: border-box; /* Important for consistent sizing */
+        transition: all 0.3s ease; /* Smooth transition for hover effect */
+      }
+
+      /* Glassmorphism Hover Effect */
+      .glassmorphism:hover {
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+          0 0 20px rgba(20, 184, 166, 0.5); /* Enhanced shadow on hover */
+      }
+
+      /* Glassmorphism Responsive max-width adjustments */
+      /* Small screens: width < 640px */
+      @media (max-width: 639px) {
+        .glassmorphism {
+          max-width: 16rem; /* Applies to screens narrower than 640px */
+          padding: 1rem; /* Adjust padding for smaller screens */
+        }
+      }
+
+      /* Medium screens: width >= 640px and < 920px */
+      @media (min-width: 640px) and (max-width: 919px) {
+        .glassmorphism {
+          max-width: 30rem; /* Applies to screens between 640px and 919px */
+          padding: 1.25rem; /* Slightly reduced padding for medium screens */
+        }
+      }
+
+      /* Larger screens: width >= 920px */
+      @media (min-width: 920px) {
+        .glassmorphism {
+          max-width: 50rem; /* Applies to screens 920px and wider */
+        }
+      }
+
+      /* Gradient Text */
+      .gradient-text {
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Input Fields with Animated Labels - UNIFORM WITH GLASSMORPHISM */
+      .input-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem; /* Space for icon */
+        font-size: 1rem;
+        color: #fff; /* White text for input */
+
+        /* Glassmorphism uniformity for input field */
+        background: rgba(
+          255,
+          255,
+          255,
+          0.08
+        ); /* Slightly less opaque than main glassmorphism for contrast */
+        border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle white border */
+        border-radius: 0.75rem; /* Rounded corners */
+        backdrop-filter: blur(8px); /* Apply blur directly */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+        transition: all 0.3s ease; /* Smooth transitions */
+        box-sizing: border-box; /* Include padding and border in width */
+      }
+
+      /* Placeholder styling */
+      .input-group input::placeholder {
+        color: rgba(255, 255, 255, 0.5); /* Softer placeholder color */
+        opacity: 1; /* Ensures placeholder is visible in Edge/IE */
+      }
+      .input-group input:focus::placeholder {
+        color: transparent; /* Hide placeholder on focus */
+      }
+
+      .input-group input:focus {
+        outline: none; /* Remove default outline */
+        border-color: #14b8a6; /* Highlight border on focus with teal */
+        background: rgba(
+          255,
+          255,
+          255,
+          0.12
+        ); /* Slightly brighter background on focus */
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.3),
+          0 4px 15px rgba(0, 0, 0, 0.3); /* Teal glow on focus */
+      }
+
+      .input-group label {
+        position: absolute;
+        top: 50%;
+        left: 2.5rem; /* Align with input text start, considering icon */
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7); /* Slightly brighter default label */
+        font-size: 1rem;
+        pointer-events: none; /* Allows clicks to pass through to the input */
+        transition: all 0.3s ease;
+        white-space: nowrap; /* Prevent label from wrapping initially */
+        overflow: hidden; /* Hide overflow if it tries to wrap */
+        text-overflow: ellipsis; /* Add ellipsis if hidden */
+      }
+
+      .input-group input:focus + label,
+      .input-group input:not(:placeholder-shown) + label {
+        top: -0.65rem; /* Move label above the input field */
+        left: 0.75rem; /* Align with the start of the input box */
+        font-size: 0.75rem;
+        /* Retain gradient text for focused/active label */
+        background: linear-gradient(
+          135deg,
+          #f97316,
+          #a855f7,
+          #14b8a6
+        ); /* Adjusted gradient to be more "joyful" */
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        /* Add a subtle background to make text readable against blur */
+        padding: 0 0.3rem;
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.6
+        ); /* Dark background behind the text */
+        border-radius: 0.25rem;
+        transform: translateY(
+          -50%
+        ); /* Ensure vertical centering after top adjust */
+      }
+
+      .input-group i {
+        position: absolute;
+        left: 0.75rem; /* Position icon */
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.6); /* Default icon color */
+        font-size: 1rem;
+        line-height: 1; /* Prevent line-height issues */
+        transition: color 0.3s ease;
+      }
+
+      .input-group input:focus ~ i {
+        color: #14b8a6; /* Change icon color on focus */
+      }
+
+      /* Responsive Adjustments for Input Fields within Media Queries */
+      @media (max-width: 639px) {
+        /* Inherits glassmorphism max-width from above */
+        .input-group input {
+          font-size: 0.9rem; /* Slightly smaller font for narrow screens */
+          padding: 0.6rem 0.8rem 0.6rem 2rem; /* Adjust padding to fit smaller fonts, keep icon space */
+        }
+        .input-group label {
+          font-size: 0.9rem; /* Match input font size */
+          left: 2rem; /* Adjust label position */
+        }
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+          font-size: 0.7rem; /* Smaller active label */
+          left: 0.5rem; /* Adjust active label position */
+          top: -0.5rem; /* Adjusted top for smaller fonts */
+        }
+        .input-group i {
+          font-size: 0.9rem; /* Match input font size */
+          left: 0.6rem; /* Adjust icon position */
+        }
+      }
+
+      /* Password Strength Bar */
+      .password-strength-bar {
+        height: 5px;
+        margin-top: 0.5rem;
+        border-radius: 2.5px;
+        transition: width 0.3s ease, background-color 0.3s ease;
+      }
+
+      /* Custom Checkbox */
+      .custom-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative; /* Ensure proper positioning context */
+        margin-bottom: 1.5rem;
+      }
+
+      .custom-checkbox input {
+        appearance: none;
+        width: 1.25rem;
+        height: 1.25rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative; /* Ensure the input is the positioning context for ::after */
+      }
+
+      .custom-checkbox input:checked {
+        background: #14b8a6;
+        border-color: #14b8a6;
+        box-shadow: 0 0 10px rgba(20, 184, 166, 0.3);
+      }
+      a {
+        color: #14b8a6;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .custom-checkbox input:checked::after {
+        content: "\f00c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        color: #fff;
+        font-size: 0.75rem;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        line-height: 1; /* Ensure the icon is centered properly */
+      }
+
+      /* Glowing Button */
+      .glow-btn {
+        position: relative;
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+        color: #fff;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        border: none;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        gap: 0.5rem;
+      }
+
+      .glow-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: 0.5s;
+      }
+
+      .glow-btn:hover::before {
+        left: 100%;
+      }
+
+      .glow-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(20, 184, 166, 0.5);
+      }
+
+      .glow-btn:focus {
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.4);
+      }
+
+      /* Blinking/Pulsing Button */
+      .blink-btn {
+        animation: pulse 0.3s infinite;
+        gap: 0.5rem;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Google Button */
+      .google-btn {
+        background: linear-gradient(135deg, #4285f4, #34a853);
+        border: none;
+        gap: 0.5rem;
+      }
+
+      .google-btn:hover {
+        background: linear-gradient(135deg, #34a853, #4285f4);
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 640px) {
+        .glassmorphism {
+          padding: 1.5rem;
+          max-width: 90%;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        p {
+          font-size: 0.9rem;
+        }
+
+        .input-group input {
+          font-size: 0.9rem;
+        }
+
+        .input-group label {
+          font-size: 0.9rem;
+        }
+
+        .glow-btn {
+          font-size: 0.9rem;
+          padding: 0.5rem 1rem;
+        }
+      }
     </style>
-</head>
-<body>
-    <h1>Register</h1>
-    <form method="post">
-        <label for="username">Username:</label><br>
-        <input type="text" name="username" id="username" required><br>
-        <label for="password">Password:</label><br>
-        <input type="password" name="password" id="password" required><br>
-        <button type="submit">Register</button>
-    </form>
-    <p><a href="/login">Already have an account? Login</a></p>
-</body>
+    <script>
+      function checkPasswordStrength() {
+        const password = document.getElementById("password").value;
+        const strengthElement = document.getElementById("password-strength");
+        const strengthBar = document.getElementById("password-strength-bar");
+        const hasUpper = /[A-Z]/.test(password);
+        const hasDigit = /[0-9]/.test(password);
+        const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
+          password
+        );
+        const isLong = password.length >= 8;
+
+        if (isLong && hasUpper && hasDigit && hasSpecial) {
+          strengthElement.textContent = "Strong";
+          strengthElement.className = "text-green-500 text-sm mt-2";
+          strengthBar.style.width = "100%";
+          strengthBar.style.backgroundColor = "#22c55e";
+        } else if (isLong && (hasUpper || hasDigit)) {
+          strengthElement.textContent = "Moderate";
+          strengthElement.className = "text-yellow-500 text-sm mt-2";
+          strengthBar.style.width = "66%";
+          strengthBar.style.backgroundColor = "#eab308";
+        } else {
+          strengthElement.textContent = "Weak";
+          strengthElement.className = "text-red-600 text-sm mt-2";
+          strengthBar.style.width = "33%";
+          strengthBar.style.backgroundColor = "#ef4444";
+        }
+      }
+    </script>
+  </head>
+  <body
+    class="min-h-screen flex items-center justify-center p-4 overflow-x-hidden"
+  >
+    <!-- Video Background -->
+    <div class="video-container">
+      <video class="hero-video" autoplay loop muted playsinline>
+        <source src="/static/videos/tech-auth.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div class="video-overlay"></div>
+    </div>
+
+    <!-- Register Form -->
+    <div
+      class="glassmorphism w-full max-w-md mx-auto p-8 animate__animated animate__zoomIn"
+    >
+      <div class="text-center mb-6">
+        <h1 class="text-4xl font-bold gradient-text mb-2 gap">
+          <i class="fas fa-user-plus mr-2"></i>Register
+        </h1>
+        <p class="text-gray-200 text-lg">Join Tanzania E-Service Today!</p>
+      </div>
+      {% if error %}
+      <p
+        class="text-red-400 mb-6 text-center bg-red-900/30 p-4 rounded-lg animate__animated animate__shakeX"
+      >
+        {{ error }}
+      </p>
+      {% endif %}
+      <form method="POST" class="flex flex-col gap-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+        <div class="input-group">
+          <input
+            type="email"
+            name="email"
+            id="email"
+            required
+            placeholder=" "
+            aria-label="Email"
+          />
+          <label for="email">Email Address</label>
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div class="input-group">
+          <input
+            type="password"
+            name="password"
+            id="password"
+            required
+            placeholder=" "
+            oninput="checkPasswordStrength()"
+            aria-label="Password"
+          />
+          <label for="password">Password</label>
+          <i class="fas fa-lock"></i>
+        </div>
+        <div class="flex items-center gap-2 mt-2">
+          <div id="password-strength-bar" class="w-0"></div>
+          <p id="password-strength" class="text-sm"></p>
+        </div>
+        <div class="custom-checkbox">
+          <input
+            type="checkbox"
+            name="consent"
+            id="consent"
+            required
+            aria-label="Agree to terms and conditions"
+          />
+          <label for="consent" class="text-gray-200 text-sm">
+            I agree to the
+            <a
+              href="/privacy"
+              target="_blank"
+              class="text-teal-300 hover:underline"
+              >terms and privacy policy</a
+            >
+          </label>
+        </div>
+        <button
+          type="submit"
+          class="glow-btn flex items-center justify-center mt-4"
+          aria-label="Register"
+        >
+          <i class="fas fa-user-plus mr-2"></i> Register
+        </button>
+      </form>
+      <p class="mt-6 text-center text-gray-200 text-sm">
+        Already have an account? {% if show_login_blink %}
+        <a href="/login" class="glow-btn blink-btn inline-flex items-center">
+          <i class="fas fa-sign-in-alt mr-2"></i> Sign in via Email/Password
+        </a>
+        {% elif show_google_blink %}
+        <!-- Do not show email/password link if Google Sign-In is required -->
+        {% else %}
+        <a href="/login" class="text-teal-300 hover:underline">Login</a>
+        {% endif %}
+      </p>
+      <div class="mt-4 text-center">
+        {% if show_google_blink %}
+        <a
+          href="/google_login"
+          class="glow-btn google-btn inline-flex items-center blink-btn"
+        >
+          <i class="fab fa-google mr-2"></i> Sign in via Google
+        </a>
+        {% else %}
+        <a
+          href="/google_login"
+          class="glow-btn google-btn inline-flex items-center"
+        >
+          <i class="fab fa-google mr-2"></i> Sign up with Google
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </body>
 </html>

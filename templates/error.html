@@ -1,0 +1,56 @@
+<!--templates/error.html-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error - Tanzania E-Service</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
+    />
+    <link rel="icon" href="/favicon.ico" />
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div
+      class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-auto text-center animate__animated animate__fadeInUp"
+    >
+      <h1 class="text-3xl font-semibold text-gray-800 mb-6">
+        <i class="fas fa-exclamation-triangle mr-2 text-red-600"></i>Oops!
+        Something Went Wrong
+      </h1>
+      <p class="text-red-600 mb-4 bg-red-100 p-4 rounded-lg error-message">
+        {{ error }}
+      </p>
+      <p class="text-gray-600 text-sm mb-6">
+        Please try again or contact support at
+        <a
+          href="mailto:support@eservice.tz"
+          class="text-blue-600 hover:underline"
+        >
+          support@eservice.tz </a
+        >.
+      </p>
+      <a
+        href="/"
+        class="inline-block bg-blue-600 text-white text-sm font-medium rounded-lg transition"
+        style="padding: 0.5rem 1.5rem"
+      >
+        Return to Home
+      </a>
+    </div>
+  </body>
+</html>

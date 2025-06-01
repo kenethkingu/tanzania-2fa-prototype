@@ -1,0 +1,436 @@
+<!--templates/totp_verify.html-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2FA Verification - Tanzania E-Service</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@300;400;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
+    />
+    <link rel="icon" href="/favicon.ico" />
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      /* Video Background */
+      .video-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .hero-video {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+
+      .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(
+          0,
+          0,
+          0,
+          0.5
+        ); /* Slightly lighter overlay for better contrast */
+        z-index: 0;
+      }
+
+      /* Glassmorphism */
+      .glassmorphism {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.15),
+          rgba(255, 255, 255, 0.05)
+        );
+        backdrop-filter: blur(15px);
+        border: 2px solid transparent;
+        border-image: linear-gradient(135deg, #14b8a6, #0d9488) 1;
+        padding: 1.5rem; /* Default padding for larger screens */
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        width: 100%; /* Default width, adjusted by max-width */
+        margin: 0 auto;
+        box-sizing: border-box; /* Important for consistent sizing */
+        border-radius: 1rem; /* Added for consistency */
+        transition: all 0.3s ease; /* Smooth transition for hover effect */
+      }
+
+      /* Small screens: width < 640px */
+      @media (max-width: 639px) {
+        .glassmorphism {
+          max-width: 16rem; /* Applies to screens narrower than 640px */
+          padding: 1rem; /* Reduced padding for the card on small screens */
+        }
+      }
+
+      /* Medium screens: width >= 640px and < 920px */
+      @media (min-width: 640px) and (max-width: 919px) {
+        .glassmorphism {
+          max-width: 30rem; /* Applies to screens between 640px and 919px */
+          padding: 1.25rem; /* Slightly reduced padding for the card on medium screens */
+        }
+      }
+
+      /* Larger screens: width >= 920px */
+      @media (min-width: 920px) {
+        .glassmorphism {
+          max-width: 50rem; /* Applies to screens 920px and wider */
+          padding: 1.5rem; /* Full padding for larger screens */
+        }
+      }
+
+      .glassmorphism:hover {
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
+          0 0 20px rgba(20, 184, 166, 0.5);
+      }
+
+      /* Gradient Text */
+      .gradient-text {
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Input Fields with Animated Labels - UNIFORM WITH GLASSMORPHISM (UPDATED) */
+      .input-group {
+        position: relative;
+        margin-bottom: 1.5rem; /* Base margin */
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem; /* Base padding, space for icon */
+        font-size: 1rem; /* Base font size */
+        color: #fff; /* White text for input */
+
+        /* Glassmorphism uniformity for input field */
+        background: rgba(
+          255,
+          255,
+          255,
+          0.08
+        ); /* Slightly less opaque than main glassmorphism for contrast */
+        border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle white border */
+        border-radius: 0.75rem; /* Rounded corners */
+        backdrop-filter: blur(8px); /* Apply blur directly */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+        transition: all 0.3s ease; /* Smooth transitions */
+        box-sizing: border-box; /* Include padding and border in width */
+      }
+
+      /* Placeholder styling */
+      .input-group input::placeholder {
+        color: rgba(255, 255, 255, 0.5); /* Softer placeholder color */
+        opacity: 1; /* Ensures placeholder is visible in Edge/IE */
+      }
+      .input-group input:focus::placeholder {
+        color: transparent; /* Hide placeholder on focus */
+      }
+
+      .input-group input:focus {
+        outline: none; /* Remove default outline */
+        border-color: #14b8a6; /* Highlight border on focus with teal */
+        background: rgba(
+          255,
+          255,
+          255,
+          0.12
+        ); /* Slightly brighter background on focus */
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.3),
+          0 4px 15px rgba(0, 0, 0, 0.3); /* Teal glow on focus */
+      }
+
+      .input-group label {
+        position: absolute;
+        top: 50%;
+        left: 2.5rem; /* Align with input text start, considering icon */
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7); /* Slightly brighter default label */
+        font-size: 1rem; /* Base font size */
+        pointer-events: none; /* Allows clicks to pass through to the input */
+        transition: all 0.3s ease;
+        white-space: nowrap; /* Prevent label from wrapping initially */
+        overflow: hidden; /* Hide overflow if it tries to wrap */
+        text-overflow: ellipsis; /* Add ellipsis if hidden */
+      }
+
+      .input-group input:focus + label,
+      .input-group input:not(:placeholder-shown) + label {
+        top: -0.65rem; /* Move label above the input field */
+        left: 0.75rem; /* Align with the start of the input box */
+        font-size: 0.75rem; /* Smaller font for active label */
+        /* Retain gradient text for focused/active label */
+        background: linear-gradient(
+          135deg,
+          #f97316,
+          #a855f7,
+          #14b8a6
+        ); /* "Joyful" gradient */
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        /* Add a subtle background to make text readable against blur */
+        padding: 0 0.3rem;
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.6
+        ); /* Dark background behind the text */
+        border-radius: 0.25rem;
+        transform: translateY(
+          -50%
+        ); /* Ensure vertical centering after top adjust */
+      }
+
+      .input-group i {
+        position: absolute;
+        left: 0.75rem; /* Position icon */
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.6); /* Default icon color */
+        font-size: 1rem; /* Base icon size */
+        line-height: 1; /* Prevent line-height issues */
+        transition: color 0.3s ease;
+      }
+
+      .input-group input:focus ~ i {
+        color: #14b8a6; /* Change icon color on focus */
+      }
+
+      /* Responsive Adjustments (including input-group for uniformity) */
+
+      /* Small screens: width < 640px */
+      @media (max-width: 639px) {
+        .glassmorphism {
+          max-width: 16rem; /* Applies to screens narrower than 640px */
+          padding: 1rem; /* Reduced padding for the card */
+        }
+
+        /* Input group specific adjustments for small screens */
+        .input-group {
+          margin-bottom: 1rem; /* Slightly less margin for compactness */
+        }
+        .input-group input {
+          font-size: 0.9rem; /* Smaller input text */
+          padding: 0.6rem 0.8rem 0.6rem 2rem; /* Adjusted padding to fit smaller font and icon */
+        }
+        .input-group label {
+          font-size: 0.9rem; /* Smaller label font */
+          left: 2rem; /* Adjust default label position relative to new padding */
+        }
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+          font-size: 0.7rem; /* Smaller active label font */
+          left: 0.5rem; /* Adjusted active label position */
+          top: -0.5rem; /* Adjusted top for smaller font */
+        }
+        .input-group i {
+          font-size: 0.9rem; /* Smaller icon size */
+          left: 0.6rem; /* Adjusted icon position */
+        }
+      }
+
+      /* Medium screens: width >= 640px and < 920px */
+      @media (min-width: 640px) and (max-width: 919px) {
+        .glassmorphism {
+          max-width: 30rem; /* Applies to screens between 640px and 919px */
+          padding: 1.25rem; /* Slightly reduced padding for the card */
+        }
+
+        /* Input group specific adjustments for medium screens */
+        .input-group {
+          margin-bottom: 1.25rem; /* Slightly less margin for compactness */
+        }
+        .input-group input {
+          font-size: 0.95rem; /* Slightly smaller input text */
+          padding: 0.7rem 0.9rem 0.7rem 2.25rem; /* Adjusted padding */
+        }
+        .input-group label {
+          font-size: 0.95rem; /* Slightly smaller label font */
+          left: 2.25rem; /* Adjust default label position */
+        }
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+          font-size: 0.725rem; /* Slightly smaller active label */
+          left: 0.6rem; /* Adjusted active label position */
+          top: -0.6rem; /* Adjusted top */
+        }
+        .input-group i {
+          font-size: 0.95rem; /* Slightly smaller icon */
+          left: 0.65rem; /* Adjusted icon position */
+        }
+      }
+
+      /* Larger screens: width >= 920px (default styles apply here) */
+      @media (min-width: 920px) {
+        .glassmorphism {
+          max-width: 50rem; /* Applies to screens 920px and wider */
+          padding: 1.5rem; /* Full padding for larger screens */
+        }
+        /* No specific input-group overrides needed here as base styles are for large screens */
+      }
+      /* Glowing Button */
+      .glow-btn {
+        position: relative;
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+        color: #fff;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        border: none;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .glow-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: 0.5s;
+      }
+
+      .glow-btn:hover::before {
+        left: 100%;
+      }
+
+      .glow-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(20, 184, 166, 0.5);
+      }
+
+      .glow-btn:focus {
+        box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.4);
+      }
+
+      a {
+        color: #14b8a6;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 640px) {
+        .glassmorphism {
+          padding: 1.5rem;
+          max-width: 90%;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        p {
+          font-size: 0.9rem;
+        }
+
+        .input-group input {
+          font-size: 0.9rem;
+        }
+
+        .input-group label {
+          font-size: 0.9rem;
+        }
+
+        .glow-btn {
+          font-size: 0.9rem;
+          padding: 0.5rem 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen flex items-center justify-center p-4 overflow-x-hidden"
+  >
+    <div class="video-container">
+      <video class="hero-video" autoplay loop muted playsinline>
+        <source src="/static/videos/tech-auth.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div class="video-overlay"></div>
+    </div>
+
+    <div
+      class="glassmorphism w-full max-w-md mx-auto p-8 animate__animated animate__zoomIn"
+    >
+      <h1 class="text-4xl font-bold gradient-text mb-6 text-center">
+        <i class="fas fa-shield-alt mr-2"></i>Enter 2FA Code
+      </h1>
+      {% if error %}
+      <p
+        class="text-red-400 mb-4 text-center bg-red-900/30 p-4 rounded-lg animate__animated animate__shakeX"
+      >
+        {{ error }}
+      </p>
+      {% endif %}
+      <p class="text-gray-200 mb-4 text-lg">
+        Input a 6-digit PIN from your authenticator app to proceed to the
+        dashboard for your Google Sign-In email:
+        <strong class="text-teal-300">{{ pending_email }}</strong>.
+      </p>
+      <form method="post" class="flex flex-col gap-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+        <div class="input-group">
+          <input
+            type="text"
+            name="totp_code"
+            id="totp_code"
+            required
+            placeholder=" "
+            aria-label="2FA Code"
+            pattern="[0-9]{6}"
+            inputmode="numeric"
+            maxlength="6"
+          />
+          <label for="totp_code">6-Digit 2FA Code</label>
+          <i class="fas fa-key"></i>
+        </div>
+        <button type="submit" class="glow-btn" aria-label="Verify">
+          <i class="fas fa-check-circle mr-2"></i> Verify
+        </button>
+      </form>
+    </div>
+  </body>
+</html>
