@@ -1,99 +1,324 @@
+<!--templates/dashboard.html-->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Tanzania E-Service</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        color: #fff;
+      }
+      .gap {
+        gap: 1rem;
+      }
+
+      .gap-2 {
+        gap: 3rem;
+      }
+
+      /* Video Background */
+      .video-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .hero-video {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+      }
+
+      .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 0;
+      }
+
+      /* Glassmorphism */
+      .glassmorphism {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.15),
+          rgba(255, 255, 255, 0.05)
+        );
+        backdrop-filter: blur(15px);
+        border: 2px solid transparent;
+        border-image: linear-gradient(135deg, #14b8a6, #0d9488) 1;
+        padding: 1.5rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        width: 100%; /* Default width for all screens, adjusted by max-width */
+        margin: 0 auto;
+        box-sizing: border-box; /* Important for consistent sizing */
+      }
+
+      /* Small screens: width < 640px */
+      @media (max-width: 639px) {
+        .glassmorphism {
+          max-width: 16rem; /* Applies to screens narrower than 640px */
         }
-        header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 15px;
-            text-align: center;
+      }
+
+      /* Medium screens: width >= 640px and < 920px */
+      @media (min-width: 640px) and (max-width: 919px) {
+        .glassmorphism {
+          max-width: 30rem; /* Applies to screens between 640px and 919px */
         }
-        nav {
-            background-color: #34495e;
-            padding: 10px;
-            text-align: center;
+      }
+
+      /* Larger screens: width >= 920px */
+      @media (min-width: 920px) {
+        .glassmorphism {
+          max-width: 50rem; /* Applies to screens 920px and wider */
         }
-        nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
-            font-weight: bold;
+      }
+
+      /* Colorful Text Styles */
+      .joyful-text {
+        background: linear-gradient(90deg, #f97316, #a855f7, #14b8a6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        animation: colorPulse 2s infinite;
+      }
+      .joyful {
+        background-clip: text;
+        color: yellow;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        text-decoration: none;
+      }
+
+      .gradient-text {
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      @keyframes colorPulse {
+        0% {
+          filter: hue-rotate(0deg);
         }
-        nav a:hover {
-            color: #3498db;
+        50% {
+          filter: hue-rotate(60deg);
         }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
+        100% {
+          filter: hue-rotate(0deg);
+        }
+      }
+
+      /* Glowing Button */
+      .glow-btn {
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+        color: #fff;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .glow-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(20, 184, 166, 0.5);
+      }
+
+      /* Info Items */
+      .info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .info-item i {
+        margin-right: 0.75rem;
+        font-size: 1.2rem;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.15),
+          rgba(255, 255, 255, 0.05)
+        );
+        backdrop-filter: blur(15px);
+        border: 2px solid transparent;
+        border-image: linear-gradient(135deg, #14b8a6, #0d9488) 1;
+        padding: 2rem;
+        border-radius: 1rem;
+        max-width: 40rem;
+        width: 90%;
+        position: relative;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.5rem;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      /* Game Styles */
+      .game-canvas {
+        border: 2px solid #14b8a6;
+        background: #228b22; /* Green ground */
+        border-radius: 0.5rem;
+      }
+
+      .game-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 640px) {
+        .glassmorphism {
+          max-width: 90%;
         }
         h1 {
-            color: #2c3e50;
+          font-size: 2rem;
         }
-        .welcome-message {
-            font-size: 1.2em;
-            margin: 20px 0;
+        .game-canvas {
+          width: 90vw;
+          height: auto;
         }
-        .action-button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-top: 10px;
-            background: #3498db;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .action-button:hover {
-            background: #2980b9;
-        }
-        footer {
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-        @media (max-width: 600px) {
-            .container {
-                margin: 10px;
-                padding: 15px;
-            }
-            nav a {
-                display: block;
-                margin: 10px 0;
-            }
-        }
+      }
     </style>
-</head>
-<body>
-    <header>
-        <h1>Tanzania E-Service Portal</h1>
-    </header>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/">Logout</a>
-    </nav>
-    <div class="container">
-        <h1>Welcome, {{ username }}!</h1>
-        <p class="welcome-message">This is your secure e-service dashboard. Your account is protected with TOTP 2FA.</p>
+  </head>
+  <body class="min-h-screen flex flex-col relative">
+    <div class="video-container">
+      <video class="hero-video" autoplay loop muted playsinline>
+        <source src="/static/videos/tech-auth.mp4" type="video/mp4" />
+      </video>
+      <div class="video-overlay"></div>
     </div>
-    <footer>
-        <p>&copy; 2025 Tanzania E-Service Portal. All rights reserved.</p>
+
+    <header class="py-4 relative z-10 bg-gray-900 bg-opacity-70">
+      <div class="container mx-auto px-4 text-center">
+        <h1 class="text-3xl font-bold joyful-text">
+          Tanzania E-Service Portal
+        </h1>
+      </div>
+    </header>
+
+    <nav class="py-3 relative z-10 bg-gray-800 bg-opacity-70 shadow-lg">
+      <div class="container mx-auto px-4 flex justify-center gap-2">
+        <a href="/" class="text-lg joyful hover:scale-105 transition">
+          <i class="fas fa-home mr-2"></i>Home
+        </a>
+        <a href="/logout" class="text-lg joyful hover:scale-105 transition">
+          <i class="fas fa-sign-out-alt mr-2"></i>Logout
+        </a>
+        <a
+          href="{{ url_for('snake_game') }}"
+          class="text-lg joyful hover:scale-105 transition"
+        >
+          <i class="fas fa-gamepad mr-2"></i>Play Snake
+        </a>
+      </div>
+    </nav>
+
+    <main
+      class="flex-grow container mx-auto p-4 flex items-center justify-center relative z-10"
+    >
+      <div class="glassmorphism p-8 rounded-xl text-center">
+        <h2 class="text-3xl font-bold mb-2">Hey there!</h2>
+        <p class="text-lg joyful-text mb-4">
+          Congratulations! You’ve successfully reached the dashboard—this means
+          your account is super secure! 🎉
+        </p>
+        <p class="text-lg mb-4">
+          You’ve securely joined Tanzania E-Service. No hacker’s getting past
+          our fortress—your account is locked down tight! 😄
+        </p>
+        <div class="flex flex-col items-start text-left space-y-3 mb-6">
+          <p class="info-item">
+            <i class="fas fa-shield-alt text-teal-400"></i>
+            <span class="gap"
+              ><span class="font-semibold joyful-text"
+                >Authentication Method:</span
+              >
+              {{ auth_method }}</span
+            >
+          </p>
+          <p class="info-item">
+            <i class="fas fa-exclamation-circle text-yellow-400"></i>
+            <span class="gap"
+              ><span class="font-semibold joyful-text"
+                >Failed Login Attempts:</span
+              >
+              {{ failed_attempts }}</span
+            >
+          </p>
+          <p class="info-item">
+            <i class="fas fa-clock text-blue-400"></i>
+            <span class="gap">
+              <span class="font-semibold joyful-text">Last Login:</span> {{
+              last_login }}</span
+            >
+          </p>
+        </div>
+        <p class="text-lg joyful-text mb-4">
+          As a gift, we offer you a Snake game to play! 🎮 Click the "Play
+          Snake" link above to start!
+        </p>
+      </div>
+    </main>
+
+    <footer class="py-4 relative z-10 bg-gray-900 bg-opacity-70">
+      <div class="container mx-auto px-4 text-center">
+        <p class="text-sm joyful-text">
+          © 2025 Tanzania E-Service Portal. All rights reserved.
+          <a href="/privacy" class="gradient-text hover:underline"
+            >Privacy Policy</a
+          >
+        </p>
+      </div>
     </footer>
-</body>
+  </body>
 </html>

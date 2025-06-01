@@ -1,0 +1,1124 @@
+<!--templates/snake-game.html-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake Game - Tanzania E-Service</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <style>
+      :root {
+        --teal-primary: #14b8a6;
+        --teal-dark: #0d9488;
+        --purple-accent: #a855f7;
+        --orange-accent: #f97316;
+        --text-light: #fff;
+        --text-dark: #333;
+        --bg-gradient: linear-gradient(135deg, #0d9488, #14b8a6, #a855f7);
+        --glass-bg-light: rgba(255, 255, 255, 0.1);
+        --glass-bg-dark: rgba(0, 0, 0, 0.2);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --box-shadow-light: 0 10px 30px rgba(0, 0, 0, 0.3);
+        --box-shadow-glow: 0 0 20px rgba(20, 184, 166, 0.5);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        padding: 0;
+        background: var(--bg-gradient);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+        color: var(--text-light);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+      }
+
+      @keyframes gradientBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .header,
+      .nav,
+      .game-container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+      }
+
+      .header {
+        text-align: center;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .nav {
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        margin-bottom: 1rem;
+      }
+
+      .nav a {
+        color: var(--text-light);
+        text-decoration: none;
+        margin: 0 1.5rem;
+        font-weight: 500;
+        transition: color 0.3s ease, transform 0.2s ease;
+        position: relative;
+        padding-bottom: 0.2rem;
+      }
+
+      .nav a:hover {
+        color: var(--orange-accent);
+        transform: translateY(-2px);
+      }
+
+      .nav a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--orange-accent);
+        transition: width 0.3s ease;
+      }
+
+      .nav a:hover::after {
+        width: 100%;
+      }
+
+      .game-container {
+        max-width: 650px;
+        width: 95%;
+        margin: 0 auto;
+        padding: 1rem;
+        background: var(--glass-bg-light);
+        backdrop-filter: blur(12px);
+        border-radius: 1rem;
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--box-shadow-light);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .game-info {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        color: var(--orange-accent);
+        font-weight: 600;
+        padding: 0 0.5rem;
+      }
+
+      .game-canvas {
+        border: 3px solid var(--teal-primary);
+        background: #1a1a1a;
+        border-radius: 0.75rem;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease;
+        display: block;
+      }
+
+      .game-canvas:hover {
+        transform: scale(1.005);
+      }
+
+      .joyful-text {
+        background: linear-gradient(
+          90deg,
+          var(--orange-accent),
+          var(--purple-accent),
+          var(--teal-primary)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        animation: colorPulse 3s infinite alternate;
+        font-weight: 700;
+      }
+
+      @keyframes colorPulse {
+        0% {
+          filter: hue-rotate(0deg);
+        }
+        50% {
+          filter: hue-rotate(90deg);
+        }
+        100% {
+          filter: hue-rotate(0deg);
+        }
+      }
+
+      .game-message {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 1rem;
+        color: var(--orange-accent);
+      }
+
+      .start-button,
+      .game-over-modal button,
+      .leaderboard-button,
+      .close-leaderboard-button {
+        background: linear-gradient(
+          135deg,
+          var(--teal-primary),
+          var(--teal-dark)
+        );
+        color: var(--text-light);
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 0.75rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        margin-top: 1rem;
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .start-button:hover,
+      .game-over-modal button:hover,
+      .leaderboard-button:hover,
+      .close-leaderboard-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), var(--box-shadow-glow);
+      }
+
+      .start-button:active,
+      .game-over-modal button:active,
+      .leaderboard-button:active,
+      .close-leaderboard-button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .start-button:focus,
+      .game-over-modal button:focus,
+      .leaderboard-button:focus,
+      .close-leaderboard-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.5);
+      }
+
+      .game-over-modal,
+      .leaderboard-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+      }
+
+      .game-over-modal.show,
+      .leaderboard-modal.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        background: var(--glass-bg-light);
+        backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1rem;
+        padding: 2.5rem;
+        text-align: center;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        max-width: 400px;
+        width: 90%;
+      }
+
+      .modal-content h3 {
+        font-size: 2.5rem;
+        color: var(--orange-accent);
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .modal-content p {
+        font-size: 1.3rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+      }
+
+      .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .controls-guide {
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 1rem;
+        color: var(--text-light);
+        background: var(--glass-bg-dark);
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--glass-border);
+      }
+
+      .controls-guide p {
+        margin: 0.3rem 0;
+      }
+
+      .mobile-controls {
+        display: none;
+        margin-top: 1rem;
+        width: 100%;
+        max-width: 300px;
+        text-align: center;
+      }
+
+      .control-row {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 0.5rem 0;
+      }
+
+      .control-button {
+        background: linear-gradient(
+          135deg,
+          var(--purple-accent),
+          var(--orange-accent)
+        );
+        color: var(--text-light);
+        font-size: 1.5rem;
+        padding: 0.8rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .control-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      }
+
+      .control-button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      }
+
+      .pause-button {
+        background: linear-gradient(
+          135deg,
+          var(--teal-primary),
+          var(--teal-dark)
+        );
+      }
+
+      .lives-container {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .heart-icon {
+        font-size: 1.5rem;
+        color: var(--orange-accent);
+        transition: color 0.3s ease;
+      }
+
+      .heart-icon.empty {
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      .lives-regen-timer {
+        font-size: 1rem;
+        color: var(--text-light);
+        margin-left: 0.5rem;
+      }
+
+      .leaderboard-modal .modal-content {
+        max-width: 500px;
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+
+      .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 0.5rem;
+        text-align: left;
+        border-bottom: 1px solid var(--glass-border);
+      }
+
+      .leaderboard-table th {
+        background: var(--glass-bg-light);
+        color: var(--orange-accent);
+        font-weight: 600;
+      }
+
+      .leaderboard-table td {
+        color: var(--text-light);
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 0.5rem;
+        }
+        .header {
+          padding: 0.8rem;
+        }
+        .header h1 {
+          font-size: 1.8rem;
+        }
+        .nav {
+          padding: 0.8rem;
+        }
+        .nav a {
+          margin: 0 0.8rem;
+          font-size: 0.9rem;
+        }
+        .game-container {
+          padding: 1rem;
+          max-width: 90%;
+        }
+        .game-info {
+          font-size: 1rem;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        .game-canvas {
+          max-width: 100%;
+          max-height: 50vh;
+        }
+        .start-button,
+        .game-over-modal button,
+        .leaderboard-button,
+        .close-leaderboard-button {
+          padding: 0.7rem 1.5rem;
+          font-size: 1rem;
+        }
+        .modal-content h3 {
+          font-size: 2rem;
+        }
+        .modal-content p {
+          font-size: 1.1rem;
+        }
+        .game-message {
+          font-size: 1.2rem;
+        }
+        .controls-guide {
+          font-size: 0.9rem;
+        }
+        .mobile-controls {
+          display: block;
+        }
+        .leaderboard-modal .modal-content {
+          max-width: 90%;
+        }
+        .leaderboard-table th,
+        .leaderboard-table td {
+          padding: 0.3rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 0.3rem;
+        }
+        .header {
+          padding: 0.5rem;
+        }
+        .header h1 {
+          font-size: 1.5rem;
+        }
+        .nav {
+          padding: 0.5rem;
+        }
+        .nav a {
+          margin: 0 0.5rem;
+          font-size: 0.8rem;
+        }
+        .game-container {
+          padding: 0.5rem;
+          width: 98%;
+        }
+        .game-info {
+          font-size: 0.9rem;
+        }
+        .game-canvas {
+          max-width: 100%;
+          max-height: 40vh;
+        }
+        .start-button,
+        .game-over-modal button,
+        .leaderboard-button,
+        .close-leaderboard-button {
+          padding: 0.5rem 1rem;
+          font-size: 0.9rem;
+        }
+        .modal-content h3 {
+          font-size: 1.8rem;
+        }
+        .modal-content p {
+          font-size: 1rem;
+        }
+        .game-message {
+          font-size: 1rem;
+        }
+        .controls-guide {
+          font-size: 0.8rem;
+        }
+        .control-button {
+          width: 40px;
+          height: 40px;
+          font-size: 1.2rem;
+        }
+        .leaderboard-modal .modal-content {
+          max-width: 95%;
+        }
+        .leaderboard-table th,
+        .leaderboard-table td {
+          padding: 0.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <h1 class="joyful-text">Snake Game - Tanzania E-Service</h1>
+    </header>
+
+    <nav class="nav">
+      <a
+        href="{{ url_for('dashboard') }}"
+        class="animate__animated animate__fadeInLeft"
+        >Back to Dashboard</a
+      >
+      <a
+        href="{{ url_for('logout') }}"
+        class="animate__animated animate__fadeInRight"
+        >Logout</a
+      >
+    </nav>
+
+    <div class="game-container animate__animated animate__fadeInUp">
+      <div class="game-info">
+        <div style="display: flex; align-items: center; gap: 1rem">
+          <span id="lives"></span>
+          <span id="livesRegenTimer" class="lives-regen-timer"
+            >Next Life: 05:00</span
+          >
+        </div>
+        <span id="score">Score: 0</span>
+        <span id="highScore">High Score: {{ high_score }}</span>
+      </div>
+      <canvas id="gameCanvas" class="game-canvas"></canvas>
+      <p class="game-message" id="gameMessage">Press "Start Game" to begin!</p>
+      <button class="start-button" id="startButton">Start Game</button>
+      <div class="controls-guide">
+        <p>Controls:</p>
+        <p>Arrows or Buttons: Move Snake</p>
+        <p>P or Pause Button: Pause/Resume</p>
+        <p>Lives decrease on collision; regenerate every 5 minutes</p>
+      </div>
+      <div class="mobile-controls">
+        <div class="control-row">
+          <button id="upButton" class="control-button">
+            <i class="fas fa-arrow-up"></i>
+          </button>
+        </div>
+        <div class="control-row">
+          <button id="leftButton" class="control-button">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <button id="pauseButton" class="control-button pause-button">
+            <i class="fas fa-pause"></i>
+          </button>
+          <button id="rightButton" class="control-button">
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+        <div class="control-row">
+          <button id="downButton" class="control-button">
+            <i class="fas fa-arrow-down"></i>
+          </button>
+        </div>
+      </div>
+      <button class="leaderboard-button" id="leaderboardButton">
+        View Leaderboard
+      </button>
+    </div>
+
+    <div id="gameOverModal" class="game-over-modal">
+      <div class="modal-content animate__animated animate__zoomIn">
+        <h3 class="joyful-text" id="gameOverTitle">Game Over!</h3>
+        <p>
+          Your Final Score: <span id="finalScore" class="font-bold">0</span>
+        </p>
+        <div class="modal-buttons">
+          <button id="playAgainButton">Play Again</button>
+          <button id="viewLeaderboardButton">View Leaderboard</button>
+          <button id="exitButton">Exit</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="leaderboardModal" class="leaderboard-modal">
+      <div class="modal-content animate__animated animate__zoomIn">
+        <h3 class="joyful-text">Leaderboard - Top 10 Scores</h3>
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Email</th>
+              <th>Score</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body"></tbody>
+        </table>
+        <button class="close-leaderboard-button" id="closeLeaderboardButton">
+          Close
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let canvas, ctx, snake, food, dx, dy, score, lives, maxLives, livesRegenTimer, livesRegenCountdown;
+      let gameActive = false;
+      let paused = false;
+      const gridSize = 20;
+      let lastTime = 0, accumulatedTime = 0;
+      let ticksPerSecond = 5;
+      const speedIncreaseThreshold = 5;
+      const livesRegenInterval = 300000; // 5 minutes in milliseconds
+      let timeUntilNextLife = livesRegenInterval;
+
+      const livesElement = document.getElementById("lives");
+      const scoreElement = document.getElementById("score");
+      const highScoreElement = document.getElementById("highScore");
+      const gameMessageElement = document.getElementById("gameMessage");
+      const startButton = document.getElementById("startButton");
+      const gameOverModal = document.getElementById("gameOverModal");
+      const finalScoreElement = document.getElementById("finalScore");
+      const playAgainButton = document.getElementById("playAgainButton");
+      const viewLeaderboardButton = document.getElementById("viewLeaderboardButton");
+      const exitButton = document.getElementById("exitButton");
+      const gameOverTitle = document.getElementById("gameOverTitle");
+      const leaderboardBody = document.getElementById("leaderboard-body");
+      const leaderboardButton = document.getElementById("leaderboardButton");
+      const leaderboardModal = document.getElementById("leaderboardModal");
+      const closeLeaderboardButton = document.getElementById("closeLeaderboardButton");
+      const livesRegenTimerElement = document.getElementById("livesRegenTimer");
+
+      // Mobile control buttons
+      const upButton = document.getElementById("upButton");
+      const downButton = document.getElementById("downButton");
+      const leftButton = document.getElementById("leftButton");
+      const rightButton = document.getElementById("rightButton");
+      const pauseButton = document.getElementById("pauseButton");
+
+      const foodSound = new Audio("/static/audio/eat.wav");
+      const gameOverSound = new Audio("/static/audio/game-over.mp3");
+      foodSound.load();
+      gameOverSound.load();
+
+      const snakeHeadImg = new Image();
+      snakeHeadImg.src = "/static/images/snake-head.png";
+      const snakeBodyImg = new Image();
+      snakeBodyImg.src = "/static/images/snake-body.png";
+      const foodImg = new Image();
+      foodImg.src = "/static/images/apple.png";
+      const specialFoodImg = new Image();
+      specialFoodImg.src = "/static/images/golden-apple.png";
+
+      let highScore = {{ high_score }};
+      let scoreSubmitted = false;
+
+      // Initialize lives from server or session
+      lives = {{ initial_lives }};
+      maxLives = 5;
+
+      function initGame() {
+        canvas = document.getElementById("gameCanvas");
+        ctx = canvas.getContext("2d");
+
+        snake = [{ x: 6 * gridSize, y: 6 * gridSize }];
+        dx = gridSize;
+        dy = 0;
+        score = 0; // Reset score on game init
+        scoreSubmitted = false;
+        if (livesRegenTimer) clearInterval(livesRegenTimer);
+        if (livesRegenCountdown) clearInterval(livesRegenCountdown);
+        livesRegenTimer = setInterval(regenerateLife, livesRegenInterval);
+        timeUntilNextLife = livesRegenInterval;
+        livesRegenCountdown = setInterval(updateRegenTimer, 1000);
+
+        spawnFood();
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+
+        updateGameInfo();
+        gameMessageElement.textContent = "Press 'Start Game' to begin!";
+        startButton.style.display = "block";
+        gameOverModal.classList.remove("show");
+        leaderboardModal.classList.remove("show");
+
+        gameActive = false;
+        paused = false;
+        document.removeEventListener("keydown", changeDirection);
+      }
+
+      function startGameLoop() {
+        gameActive = true;
+        startButton.style.display = "none";
+        gameMessageElement.textContent = "";
+        document.addEventListener("keydown", changeDirection);
+        document.body.classList.add("game-active");
+        setupMobileControls();
+        requestAnimationFrame(gameLoop);
+      }
+
+      function gameLoop(currentTime) {
+        if (!lastTime) lastTime = currentTime;
+        const deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+        accumulatedTime += deltaTime;
+
+        if (!paused) {
+          const tickInterval = 1000 / ticksPerSecond;
+          while (accumulatedTime >= tickInterval) {
+            moveSnake();
+            accumulatedTime -= tickInterval;
+          }
+        }
+
+        draw();
+        if (gameActive) requestAnimationFrame(gameLoop);
+      }
+
+      function updateGameInfo() {
+        let hearts = "";
+        for (let i = 0; i < maxLives; i++) {
+          hearts += `<i class="fas fa-heart ${i < lives ? 'heart-icon' : 'heart-icon empty'}"></i>`;
+        }
+        livesElement.innerHTML = `Lives: ${hearts}`;
+        scoreElement.textContent = `Score: ${score}`;
+        highScoreElement.textContent = `High Score: ${highScore}`;
+      }
+
+      function updateRegenTimer() {
+        if (lives >= maxLives) {
+          livesRegenTimerElement.textContent = "Lives Full!";
+          return;
+        }
+        timeUntilNextLife -= 1000;
+        if (timeUntilNextLife <= 0) timeUntilNextLife = livesRegenInterval;
+        const minutes = Math.floor(timeUntilNextLife / 60000);
+        const seconds = Math.floor((timeUntilNextLife % 60000) / 1000);
+        livesRegenTimerElement.textContent = `Next Life: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }
+
+      function regenerateLife() {
+        if (lives < maxLives) {
+          lives++;
+          timeUntilNextLife = livesRegenInterval;
+          updateGameInfo();
+        }
+      }
+
+      function spawnFood() {
+        const isSpecial = Math.random() < 0.1;
+        let newFoodX, newFoodY;
+        do {
+          newFoodX = Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize;
+          newFoodY = Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize;
+        } while (snake.some(segment => segment.x === newFoodX && segment.y === newFoodY));
+        food = { x: newFoodX, y: newFoodY, isSpecial };
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawGrid();
+
+        if (snake && snake.length > 0) {
+          const head = snake[0];
+          const angle = getRotationAngle(dx, dy);
+          ctx.save();
+          ctx.translate(head.x + gridSize / 2, head.y + gridSize / 2);
+          ctx.rotate(angle);
+          ctx.drawImage(snakeHeadImg, -gridSize / 2, -gridSize / 2, gridSize, gridSize);
+          ctx.restore();
+
+          for (let i = 1; i < snake.length; i++) {
+            ctx.drawImage(snakeBodyImg, snake[i].x, snake[i].y, gridSize, gridSize);
+          }
+        }
+
+        if (food) {
+          ctx.drawImage(food.isSpecial ? specialFoodImg : foodImg, food.x, food.y, gridSize, gridSize);
+        }
+
+        if (paused) {
+          ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "white";
+          ctx.font = "30px Poppins";
+          ctx.textAlign = "center";
+          ctx.fillText("Paused", canvas.width / 2, canvas.height / 2);
+        }
+      }
+
+      function drawGrid() {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+        for (let x = 0; x < canvas.width; x += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+      }
+
+      function getRotationAngle(dx, dy) {
+        if (dx > 0) return 0;
+        if (dx < 0) return Math.PI;
+        if (dy > 0) return Math.PI / 2;
+        if (dy < 0) return (3 * Math.PI) / 2;
+        return 0;
+      }
+
+      function moveSnake() {
+        const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+        if (snake.slice(1).some(s => s.x === head.x && s.y === head.y)) {
+          handleCollision();
+          return;
+        }
+
+        snake.unshift(head);
+
+        if (head.x === food.x && head.y === food.y) {
+          if (food.isSpecial) {
+            score += 50;
+            lives = Math.min(lives + 1, maxLives);
+          } else {
+            score += 10;
+          }
+          foodSound.play();
+          spawnFood();
+          updateGameInfo();
+          if (score > highScore) {
+            highScore = score;
+            updateGameInfo();
+          }
+          if (score % (speedIncreaseThreshold * 10) === 0) {
+            ticksPerSecond *= 1.05;
+          }
+        } else {
+          snake.pop();
+        }
+
+        if (head.x < 0) head.x = canvas.width - gridSize;
+        if (head.x >= canvas.width) head.x = 0;
+        if (head.y < 0) head.y = canvas.height - gridSize;
+        if (head.y >= canvas.height) head.y = 0;
+      }
+
+      function handleCollision() {
+        lives--;
+        gameOverSound.play();
+        updateGameInfo();
+        if (lives > 0) {
+          gameMessageElement.textContent = `Ouch! ${lives} lives left!`;
+          resetSnake();
+          gameActive = false;
+          setTimeout(() => {
+            if (lives > 0) {
+              gameActive = true;
+              requestAnimationFrame(gameLoop);
+              gameMessageElement.textContent = "Go!";
+            }
+          }, 1500);
+        } else {
+          gameOver();
+        }
+      }
+
+      function resetSnake() {
+        snake = [{ x: 6 * gridSize, y: 6 * gridSize }];
+        dx = gridSize;
+        dy = 0;
+        spawnFood();
+        gameMessageElement.textContent = "Ready?";
+      }
+
+      function changeDirection(event) {
+        const keyPressed = event.keyCode;
+
+        if (keyPressed === 80) {
+          togglePause();
+          return;
+        }
+
+        const goingUp = dy === -gridSize, goingDown = dy === gridSize;
+        const goingRight = dx === gridSize, goingLeft = dx === -gridSize;
+
+        if (keyPressed === 37 && !goingRight) {
+          dx = -gridSize;
+          dy = 0;
+        } else if (keyPressed === 38 && !goingDown) {
+          dx = 0;
+          dy = -gridSize;
+        } else if (keyPressed === 39 && !goingLeft) {
+          dx = gridSize;
+          dy = 0;
+        } else if (keyPressed === 40 && !goingUp) {
+          dx = 0;
+          dy = gridSize;
+        }
+      }
+
+      function togglePause() {
+        paused = !paused;
+        if (paused) {
+          gameMessageElement.textContent = "Paused";
+          pauseButton.innerHTML = '<i class="fas fa-play"></i>';
+        } else {
+          gameMessageElement.textContent = "Resumed";
+          pauseButton.innerHTML = '<i class="fas fa-pause"></i>';
+          setTimeout(() => {
+            if (!paused) gameMessageElement.textContent = "";
+          }, 1000);
+        }
+      }
+
+      function setupMobileControls() {
+        upButton.addEventListener("click", () => {
+          const goingDown = dy === gridSize;
+          if (!goingDown) {
+            dx = 0;
+            dy = -gridSize;
+          }
+        });
+
+        downButton.addEventListener("click", () => {
+          const goingUp = dy === -gridSize;
+          if (!goingUp) {
+            dx = 0;
+            dy = gridSize;
+          }
+        });
+
+        leftButton.addEventListener("click", () => {
+          const goingRight = dx === gridSize;
+          if (!goingRight) {
+            dx = -gridSize;
+            dy = 0;
+          }
+        });
+
+        rightButton.addEventListener("click", () => {
+          const goingLeft = dx === -gridSize;
+          if (!goingLeft) {
+            dx = gridSize;
+            dy = 0;
+          }
+        });
+
+        pauseButton.addEventListener("click", togglePause);
+      }
+
+      function submitScore() {
+        if (!scoreSubmitted) {
+          fetch('/submit_score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ score: score })
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.high_score) {
+                highScore = data.high_score;
+                updateGameInfo();
+              }
+              scoreSubmitted = true;
+            })
+            .catch(error => console.error('Error submitting score:', error));
+        }
+      }
+
+      function gameOver() {
+        gameActive = false;
+        paused = false;
+        gameOverSound.play();
+        document.body.classList.remove("game-active");
+        if (score > highScore) {
+          highScore = score;
+          gameOverTitle.textContent = "New High Score!";
+        } else {
+          gameOverTitle.textContent = "Game Over!";
+        }
+        finalScoreElement.textContent = score;
+        gameOverModal.classList.add("show");
+        gameMessageElement.textContent = "Game Over!";
+        document.removeEventListener("keydown", changeDirection);
+        submitScore();
+      }
+
+      function resizeCanvas() {
+        const container = canvas.parentElement;
+        const containerWidth = container.clientWidth - 20;
+        const containerHeight = window.innerHeight * 0.5;
+        const maxSize = Math.min(600, containerWidth, containerHeight);
+        const size = Math.floor(maxSize / gridSize) * gridSize;
+
+        canvas.width = size;
+        canvas.height = size;
+
+        if (snake && snake.length > 0) {
+          snake.forEach(segment => {
+            segment.x = Math.min(segment.x, canvas.width - gridSize);
+            segment.y = Math.min(segment.y, canvas.height - gridSize);
+          });
+        }
+        if (food) {
+          food.x = Math.min(food.x, canvas.width - gridSize);
+          food.y = Math.min(food.y, canvas.height - gridSize);
+        }
+
+        draw();
+      }
+
+      function fetchLeaderboard() {
+        fetch('/leaderboard')
+          .then(response => response.json())
+          .then(data => {
+            leaderboardBody.innerHTML = '';
+            if (data.length === 0) {
+              const row = document.createElement('tr');
+              row.innerHTML = `<td colspan="4" style="text-align: center;">No scores yet!</td>`;
+              leaderboardBody.appendChild(row);
+            } else {
+              data.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>${index + 1}</td>
+                  <td>${entry.email}</td>
+                  <td>${entry.score}</td>
+                  <td>${new Date(entry.timestamp).toLocaleDateString()}</td>
+                `;
+                leaderboardBody.appendChild(row);
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching leaderboard:', error);
+            leaderboardBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Error loading leaderboard</td></tr>';
+          });
+      }
+
+      startButton.addEventListener("click", startGameLoop);
+
+      playAgainButton.addEventListener("click", () => {
+        submitScore();
+        lives = {{ initial_lives }}; // Reset lives for new game
+        initGame();
+        startGameLoop();
+      });
+
+      viewLeaderboardButton.addEventListener("click", () => {
+        submitScore();
+        fetchLeaderboard();
+        gameOverModal.classList.remove("show");
+        leaderboardModal.classList.add("show");
+      });
+
+      exitButton.addEventListener("click", () => {
+        submitScore();
+        window.location.href = "{{ url_for('snake_game') }}";
+      });
+
+      leaderboardButton.addEventListener("click", () => {
+        fetchLeaderboard();
+        leaderboardModal.classList.add("show");
+      });
+
+      closeLeaderboardButton.addEventListener("click", () => {
+        leaderboardModal.classList.remove("show");
+      });
+
+      window.addEventListener("load", initGame);
+    </script>
+  </body>
+</html>
